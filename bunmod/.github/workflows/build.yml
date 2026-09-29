@@ -1,0 +1,37 @@
+name: Build BunMod
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '4.9'
+
+      - name: Build Forge mod
+        run: gradle --no-daemon build
+
+      - name: List build output
+        run: ls -la build/libs || true
+
+      - name: Upload mod JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: BunMod-1.12.2
+          path: build/libs/*.jar
+          if-no-files-found: error
